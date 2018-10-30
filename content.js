@@ -31,7 +31,7 @@ const main = async () => {
 		const kw = 'design';
 		// 'design' does not necessarily have to be mentioned in the 
 		// description, as long as it is a keyword
-		const $keywords = document.querySelector('meta[name$="keywords"]');
+		const $keywords = document.querySelector('meta[name="keywords"]');
 		const description = $descriptions[0].getAttribute('content');
 		const isMatch = description.includes(kw) || (
 			$keywords && $keywords.getAttribute('content').includes(kw)
@@ -43,7 +43,9 @@ const main = async () => {
 			const isNew = await checkUrl(url);
 
 			if (isNew) {
-				alert(description);
+				if (!confirm(description)) {
+					return;
+				}
 				fetch(
 					`https://api.are.na/v2/channels/${channelSlug}/blocks`,
 					{
