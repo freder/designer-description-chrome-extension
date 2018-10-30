@@ -1,0 +1,19 @@
+{
+	"manifest_version": 2,
+	"name": "DesignerDescription",
+	"description": "get meta description text for design-related websites",
+	"version": "1",
+	"author": "freder",
+	"permissions": ["activeTab"],
+	"content_scripts": [
+		{
+			"matches": [
+				"*://*/*"
+			],
+			"run_at": "document_idle",
+			"js": [
+				"content.js"
+			]
+		}
+	]
+}
