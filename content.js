@@ -13,9 +13,7 @@ const checkUrl = async (url) => {
 	)
 		.then((res) => res.json())
 		.then(({ contents }) => {
-			// console.log(contents.total_pages);
-			// console.log(contents.current_page);
-			// console.log(contents.per);
+			// TODO: API docs say this is paginated(?)
 			const urls = contents.map((item) => {
 				return item.content.split('\n')[0].replace(/#+ +/ig, '').trim();
 			});
@@ -31,6 +29,7 @@ const main = async () => {
 		meta[property$="description"]
 	`);
 
+	// site must have a description
 	if ($descriptions && $descriptions.length) {
 		const description = $descriptions[0].getAttribute('content');
 		if (description.includes('design')) {
