@@ -1,6 +1,3 @@
-// TODO: also check keywords
-
-
 const checkUrl = async (url) => {
 	return fetch(
 		`https://api.are.na/v2/channels/${channelId}/contents`,
@@ -31,14 +28,22 @@ const main = async () => {
 
 	// site must have a description
 	if ($descriptions && $descriptions.length) {
+		const kw = 'design';
+		// 'design' does not necessarily have to be mentioned in the 
+		// description, as long as it is a keyword
+		const $keywords = document.querySelector('meta[name$="keywords"]');
 		const description = $descriptions[0].getAttribute('content');
-		if (description.includes('design')) {
-			alert(description);
+		const isMatch = description.includes(kw) || (
+			$keywords && $keywords.getAttribute('content').includes(kw)
+		);
 
+		if (isMatch) {
 			// check if url is already in existing blocks
 			const url = window.location.origin;
 			const isNew = await checkUrl(url);
+
 			if (isNew) {
+				alert(description);
 				fetch(
 					`https://api.are.na/v2/channels/${channelSlug}/blocks`,
 					{
