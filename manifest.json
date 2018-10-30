@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "DesignerDescription",
-	"description": "get meta description text for design-related websites",
+	"description": "a chrome extension that harvests all design-related meta descriptions it encounters, and adds them to an are.na channel.",
 	"version": "1",
 	"author": "freder",
 	"permissions": ["activeTab"],
@@ -12,6 +12,7 @@
 			],
 			"run_at": "document_idle",
 			"js": [
+				"config.js",
 				"content.js"
 			]
 		}
