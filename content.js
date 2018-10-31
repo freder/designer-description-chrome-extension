@@ -59,13 +59,13 @@ const main = async (override = false) => {
 						}),
 					}
 				);
-			} /*else {
-				console.info(`url exists already: ${url}`);
-			}*/
+			} else {
+				console.info('RRR: url exists already');
+			}
 		}
-	} /*else {
-		console.log('no description');
-	}*/
+	} else {
+		console.log('RRR: no description found');
+	}
 };
 
 
@@ -77,4 +77,5 @@ chrome.runtime.onMessage.addListener(
 );
 
 
+console.log('RRReady');
 main();
