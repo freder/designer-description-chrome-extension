@@ -20,7 +20,7 @@ const checkUrl = async (url) => {
 };
 
 
-const main = async () => {
+const main = async (override = false) => {
 	const $descriptions = document.querySelectorAll(`
 		meta[name$="description"],
 		meta[property$="description"]
@@ -37,7 +37,7 @@ const main = async () => {
 			$keywords && $keywords.getAttribute('content').includes(kw)
 		);
 
-		if (isMatch) {
+		if (isMatch || override) {
 			// check if url is already in existing blocks
 			const url = window.location.origin;
 			const isNew = await checkUrl(url);
@@ -46,7 +46,7 @@ const main = async () => {
 				if (!confirm(description)) {
 					return;
 				}
-				fetch(
+				return fetch(
 					`https://api.are.na/v2/channels/${channelSlug}/blocks`,
 					{
 						method: 'POST',
@@ -63,8 +63,18 @@ const main = async () => {
 				console.info(`url exists already: ${url}`);
 			}*/
 		}
-	}
+	} /*else {
+		console.log('no description');
+	}*/
 };
+
+
+chrome.runtime.onMessage.addListener(
+	async (req, sender, sendResponse) => {
+		await main(true);
+		sendResponse('ok');
+	}
+);
 
 
 main();
