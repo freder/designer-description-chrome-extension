@@ -52,14 +52,16 @@ const main = async (override = false) => {
 		// 'design' does not necessarily have to be mentioned in the 
 		// description, as long as it is a keyword
 		
-		const $keywords = document.querySelector('meta[name="keywords"]');
-		const keywordsStr = $keywords.getAttribute('content');
 		const descriptionStr = $descriptions[0].getAttribute('content');
-		const isMatch = checkMatch(
-			[descriptionStr, keywordsStr],
-			patterns
-		);
+		let strings = [descriptionStr];
 
+		const $keywords = document.querySelector('meta[name="keywords"]');
+		if ($keywords) {
+			const keywordsStr = $keywords.getAttribute('content');
+			strings = [...strings, keywordsStr];
+		}
+
+		const isMatch = checkMatch(strings, patterns);
 		if (isMatch || override) {
 			// check if url is already in existing blocks
 			const url = window.location.origin;
