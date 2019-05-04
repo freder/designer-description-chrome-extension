@@ -1,4 +1,4 @@
-const checkUrl = async (url) => {
+const fetchChannelContents = () => {
 	return fetch(
 		`https://api.are.na/v2/channels/${channelId}/contents`,
 		{
@@ -8,6 +8,29 @@ const checkUrl = async (url) => {
 			},
 		}
 	)
+		.then((res) => res.json());
+};
+
+
+const addBlock = () => {
+	return fetch(
+		`https://api.are.na/v2/channels/${channelSlug}/blocks`,
+		{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json; charset=utf-8',
+				'X-AUTH-TOKEN': arenaAccessToken,
+			},
+			body: JSON.stringify({
+				content: `# ${url}\n${descriptionStr}`,
+			}),
+		}
+	);
+};
+
+
+const checkUrl = async (url) => {
+	return fetchChannelContents()
 		.then((res) => res.json())
 		.then(({ contents }) => {
 			// TODO: API docs say this is paginated(?)
@@ -71,19 +94,7 @@ const main = async (override = false) => {
 				if (!confirm(descriptionStr)) {
 					return;
 				}
-				return fetch(
-					`https://api.are.na/v2/channels/${channelSlug}/blocks`,
-					{
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json; charset=utf-8',
-							'X-AUTH-TOKEN': arenaAccessToken,
-						},
-						body: JSON.stringify({
-							content: `# ${url}\n${description}`,
-						}),
-					}
-				);
+				return addBlock();
 			} else {
 				console.info('RRR: url exists already');
 			}
