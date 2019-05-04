@@ -1,45 +1,7 @@
-const fetchChannelContents = () => {
-	return fetch(
-		`https://api.are.na/v2/channels/${channelId}/contents`,
-		{
-			method: 'GET',
-			headers: {
-				'X-AUTH-TOKEN': arenaAccessToken,
-			},
-		}
-	)
-		.then((res) => res.json());
-};
-
-
-const addBlock = () => {
-	return fetch(
-		`https://api.are.na/v2/channels/${channelSlug}/blocks`,
-		{
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json; charset=utf-8',
-				'X-AUTH-TOKEN': arenaAccessToken,
-			},
-			body: JSON.stringify({
-				content: `# ${url}\n${descriptionStr}`,
-			}),
-		}
-	);
-};
-
-
-const checkUrl = async (url) => {
-	return fetchChannelContents()
-		.then((res) => res.json())
-		.then(({ contents }) => {
-			// TODO: API docs say this is paginated(?)
-			const urls = contents.map((item) => {
-				return item.content.split('\n')[0].replace(/#+ +/ig, '').trim();
-			});
-			const exists = urls.includes(url);
-			return !exists;
-		});
+const cfg = {
+	arenaAccessToken,
+	channelSlug,
+	channelId,
 };
 
 
@@ -50,7 +12,7 @@ const matchMultiplePatterns = (s, patterns) => {
 			return (!m)
 				? acc
 				: [...acc, m];
-		}, 
+		},
 		[]
 	)
 };
@@ -72,9 +34,9 @@ const main = async (override = false) => {
 	// site must have a description
 	if ($descriptions && $descriptions.length) {
 		const patterns = [/design/i];
-		// 'design' does not necessarily have to be mentioned in the 
+		// 'design' does not necessarily have to be mentioned in the
 		// description, as long as it is a keyword
-		
+
 		const descriptionStr = $descriptions[0].getAttribute('content');
 		let strings = [descriptionStr];
 
@@ -88,16 +50,34 @@ const main = async (override = false) => {
 		if (isMatch || override) {
 			// check if url is already in existing blocks
 			const url = window.location.origin;
-			const isNew = await checkUrl(url);
-
-			if (isNew) {
-				if (!confirm(descriptionStr)) {
-					return;
+			chrome.runtime.sendMessage(
+				{
+					fn: 'checkUrl',
+					url,
+					cfg,
+				},
+				(isNew) => {
+					if (isNew) {
+						if (!confirm(descriptionStr)) {
+							return;
+						}
+						console.log('RRR: saving...');
+						return chrome.runtime.sendMessage(
+							{
+								fn: 'addBlock',
+								url,
+								descriptionStr,
+								cfg,
+							},
+							(res) => {
+								console.log(res);
+							}
+						);
+					} else {
+						console.info('RRR: url exists already');
+					}
 				}
-				return addBlock();
-			} else {
-				console.info('RRR: url exists already');
-			}
+			);
 		}
 	} else {
 		console.log('RRR: no description found');
@@ -108,7 +88,7 @@ const main = async (override = false) => {
 chrome.runtime.onMessage.addListener(
 	async (req, sender, sendResponse) => {
 		await main(true);
-		sendResponse('ok');
+		// sendResponse('ok');
 	}
 );
 
