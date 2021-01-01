@@ -55,13 +55,15 @@ chrome.browserAction.onClicked.addListener(
 
 
 chrome.runtime.onMessage.addListener(
-	(msg, sender, sendResponse) => {
+	async (msg, sender, sendResponse) => {
 		if (msg.fn === 'checkUrl') {
-			checkUrl(msg.url, msg.cfg)
-				.then(sendResponse);
+			sendResponse(
+				await checkUrl(msg.url, msg.cfg)
+			);
 		} else if (msg.fn === 'addBlock') {
-			addBlock(msg.url, msg.descriptionStr, msg.cfg)
-				.then(sendResponse);
+			sendResponse(
+				await addBlock(msg.url, msg.descriptionStr, msg.cfg)
+			);
 		}
 		// https://developer.chrome.com/apps/runtime#event-onMessage
 		return true;
