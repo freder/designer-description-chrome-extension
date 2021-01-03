@@ -1,6 +1,7 @@
-const fetchChannelContents = (cfg) => {
+const fetchChannelContents = (cfg, page, perPage) => {
+	const pagination = `page=${page}&per=${perPage}`;
 	return fetch(
-		`https://api.are.na/v2/channels/${cfg.channelId}/contents`,
+		`https://api.are.na/v2/channels/${cfg.channelId}/contents?${pagination}`,
 		{
 			method: 'GET',
 			headers: {
@@ -12,16 +13,26 @@ const fetchChannelContents = (cfg) => {
 };
 
 
-const isUrlNew = (url, cfg) => {
-	return fetchChannelContents(cfg)
-		.then(({ contents }) => {
-			// TODO: API docs say this is paginated(?)
-			const urls = contents.map((item) => {
-				return item.content.split('\n')[0].replace(/#+ +/ig, '').trim();
-			});
-			const exists = urls.includes(url);
-			return !exists;
-		});
+const isUrlNew = async (url, cfg) => {
+	const perPage = 100;
+	let page = 0;
+	let allContents = [];
+	// fetch paginated data, until we got everything in channel:
+	while (true) {
+		page += 1;
+		const { contents } = await fetchChannelContents(cfg, page, perPage);
+		if (!contents || !contents.length) {
+			break;
+		}
+		allContents = [...allContents, ...contents];
+	}
+
+	const urls = allContents.map((item) => {
+		return item.content.split('\n')[0].replace(/#+ +/ig, '').trim();
+	});
+	console.log(urls);
+	const exists = urls.includes(url);
+	return !exists;
 };
 
 
