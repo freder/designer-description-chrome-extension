@@ -43,17 +43,6 @@ const addBlock = (url, descriptionStr, cfg) => {
 };
 
 
-chrome.browserAction.onClicked.addListener(
-	(tab) => {
-		chrome.tabs.sendMessage(
-			tab.id,
-			{ /*args: 'do it!'*/ },
-			() => {}
-		);
-	}
-);
-
-
 chrome.runtime.onMessage.addListener(
 	(msg, sender, sendResponse) => {
 		if (msg.fn === 'isUrlNew') {
@@ -65,5 +54,16 @@ chrome.runtime.onMessage.addListener(
 		}
 		// https://developer.chrome.com/apps/runtime#event-onMessage
 		return true; // keeps the message channel open until `sendResponse` is executed
+	}
+);
+
+
+chrome.browserAction.onClicked.addListener(
+	(tab) => {
+		chrome.tabs.sendMessage(
+			tab.id,
+			{ /*args: 'do it!'*/ },
+			() => {}
+		);
 	}
 );
