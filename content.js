@@ -2,6 +2,7 @@ const cfg = {
 	arenaAccessToken,
 	channelSlug,
 	channelId,
+	hostBlacklist,
 };
 
 
@@ -26,6 +27,11 @@ const checkMatch = (strings, patterns) => {
 
 
 const main = async (override = false) => {
+	const { host } = window.location;
+	if (hostBlacklist.includes(host)) {
+		return;
+	}
+
 	const $descriptions = document.querySelectorAll(`
 		meta[name$="description"],
 		meta[property$="description"]
