@@ -52,11 +52,15 @@ const main = async (override = false) => {
 			const url = window.location.origin;
 			chrome.runtime.sendMessage(
 				{
-					fn: 'checkUrl',
+					fn: 'isUrlNew',
 					url,
 					cfg,
 				},
+				{ /* options */ },
 				(isNew) => {
+					if (chrome.runtime.lastError) {
+						console.warn(chrome.runtime.lastError.message);
+					}
 					if (isNew) {
 						if (!confirm(descriptionStr)) {
 							return;

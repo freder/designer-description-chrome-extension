@@ -12,7 +12,7 @@ const fetchChannelContents = (cfg) => {
 };
 
 
-const checkUrl = async (url, cfg) => {
+const isUrlNew = (url, cfg) => {
 	return fetchChannelContents(cfg)
 		.then(({ contents }) => {
 			// TODO: API docs say this is paginated(?)
@@ -55,17 +55,15 @@ chrome.browserAction.onClicked.addListener(
 
 
 chrome.runtime.onMessage.addListener(
-	async (msg, sender, sendResponse) => {
-		if (msg.fn === 'checkUrl') {
-			sendResponse(
-				await checkUrl(msg.url, msg.cfg)
-			);
+	(msg, sender, sendResponse) => {
+		if (msg.fn === 'isUrlNew') {
+			isUrlNew(msg.url, msg.cfg)
+				.then(sendResponse);
 		} else if (msg.fn === 'addBlock') {
-			sendResponse(
-				await addBlock(msg.url, msg.descriptionStr, msg.cfg)
-			);
+			addBlock(msg.url, msg.descriptionStr, msg.cfg)
+				.then(sendResponse);
 		}
 		// https://developer.chrome.com/apps/runtime#event-onMessage
-		return true;
+		return true; // keeps the message channel open until `sendResponse` is executed
 	}
 );
