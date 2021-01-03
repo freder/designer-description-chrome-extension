@@ -32,6 +32,22 @@ const main = async (override = false) => {
 		return;
 	}
 
+	// https://developer.chrome.com/docs/extensions/reference/storage/#usage
+	// storage can be inspected at chrome://sync-internals/ 
+		// → "sync node browser" → "extension settings"
+	const blockedFieldName = 'blockedHosts';
+	const blockedHosts = JSON.parse(
+		await new Promise((resolve, reject) => {
+			chrome.storage.sync.get(
+				blockedFieldName, 
+				(result) => resolve(result[blockedFieldName])
+			);
+		}) || '[]'
+	);
+	if (blockedHosts.includes(host)) {
+		return;
+	}
+
 	const $descriptions = document.querySelectorAll(`
 		meta[name$="description"],
 		meta[property$="description"]
@@ -73,6 +89,14 @@ const main = async (override = false) => {
 					}
 					if (isNew) {
 						if (!confirm(match)) {
+							chrome.storage.sync.set(
+								{ 
+									[blockedFieldName]: JSON.stringify(
+										[...blockedHosts, host]
+									) 
+								},
+								() => {}
+							);
 							return;
 						}
 						console.log('RRR: saving...');
