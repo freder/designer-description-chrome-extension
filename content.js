@@ -9,7 +9,7 @@ const cfg = {
 const matchMultiplePatterns = (s, patterns) => {
 	return patterns.reduce(
 		(acc, pattern) => {
-			const m = s.match(pattern);
+			const m = (s || '').match(pattern);
 			return (!m)
 				? acc
 				: [...acc, m];
