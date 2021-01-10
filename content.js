@@ -20,7 +20,7 @@ const matchMultiplePatterns = (s, patterns) => {
 
 
 const checkMatch = (strings, patterns) => {
-	return !!strings.find(
+	return strings.find(
 		(s) => (matchMultiplePatterns(s, patterns).length > 0)
 	);
 };
@@ -43,8 +43,11 @@ const main = async (override = false) => {
 		// 'design' does not necessarily have to be mentioned in the
 		// description, as long as it is a keyword
 
-		const descriptionStr = $descriptions[0].getAttribute('content');
-		let strings = [descriptionStr];
+		let strings = [];
+		$descriptions.forEach(($desc) => {
+			const descriptionStr = $desc.getAttribute('content');
+			strings = [...strings, descriptionStr];
+		});
 
 		const $keywords = document.querySelector('meta[name="keywords"]');
 		if ($keywords) {
@@ -52,7 +55,8 @@ const main = async (override = false) => {
 			strings = [...strings, keywordsStr];
 		}
 
-		const isMatch = checkMatch(strings, patterns);
+		const match = checkMatch(strings, patterns);
+		const isMatch = !!match;
 		if (isMatch || override) {
 			// check if url is already in existing blocks
 			const url = window.location.origin;
@@ -68,7 +72,7 @@ const main = async (override = false) => {
 						console.warn(chrome.runtime.lastError.message);
 					}
 					if (isNew) {
-						if (!confirm(descriptionStr)) {
+						if (!confirm(match)) {
 							return;
 						}
 						console.log('RRR: saving...');
@@ -76,7 +80,7 @@ const main = async (override = false) => {
 							{
 								fn: 'addBlock',
 								url,
-								descriptionStr,
+								descriptionStr: match,
 								cfg,
 							},
 							(res) => {
