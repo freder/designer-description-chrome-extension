@@ -55,13 +55,16 @@ const setBlocked = (blockedList) => {
 
 
 const main = async (override = false) => {
+	// setBlocked([]);
 	const { host } = window.location;
+	if (hostBlacklist.includes(host)) {
+		console.log('RRR: blocked (config)');
+		return;
+	}
+
 	const blockedHosts = await getBlockedFromStorage();
-	if (
-		hostBlacklist.includes(host) ||
-		blockedHosts.includes(host)
-	) {
-		console.log('RRR: blocked');
+	if (blockedHosts.includes(host)) {
+		console.log('RRR: blocked (storage)');
 		return;
 	}
 
@@ -142,4 +145,12 @@ chrome.runtime.onMessage.addListener(
 
 
 console.log('RRReady');
-main();
+let ran = false;
+// since chrome will automatically close dialogs in new tabs,
+// let't wait until the tab becomes active
+document.addEventListener('visibilitychange', () => {
+	if (document.visibilityState === 'visible' && !ran) {
+		ran = true;
+		setTimeout(main, 300);
+	}
+});
