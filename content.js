@@ -6,6 +6,9 @@ const cfg = {
 };
 
 
+const blockedFieldName = 'blockedHosts';
+
+
 const matchMultiplePatterns = (s, patterns) => {
 	return patterns.reduce(
 		(acc, pattern) => {
@@ -26,17 +29,11 @@ const checkMatch = (strings, patterns) => {
 };
 
 
-const main = async (override = false) => {
-	const { host } = window.location;
-	if (hostBlacklist.includes(host)) {
-		return;
-	}
-
-	// https://developer.chrome.com/docs/extensions/reference/storage/#usage
-	// storage can be inspected at chrome://sync-internals/ 
-		// → "sync node browser" → "extension settings"
-	const blockedFieldName = 'blockedHosts';
-	const blockedHosts = JSON.parse(
+// https://developer.chrome.com/docs/extensions/reference/storage/#usage
+// storage can be inspected at chrome://sync-internals/ 
+	// → "sync node browser" → "extension settings"
+const getBlockedFromStorage = async () => {
+	return JSON.parse(
 		await new Promise((resolve, reject) => {
 			chrome.storage.sync.get(
 				blockedFieldName, 
@@ -44,7 +41,27 @@ const main = async (override = false) => {
 			);
 		}) || '[]'
 	);
-	if (blockedHosts.includes(host)) {
+};
+
+
+const setBlocked = (blockedList) => {
+	chrome.storage.sync.set(
+		{ 
+			[blockedFieldName]: JSON.stringify(blockedList) 
+		},
+		() => {}
+	);
+};
+
+
+const main = async (override = false) => {
+	const { host } = window.location;
+	const blockedHosts = await getBlockedFromStorage();
+	if (
+		hostBlacklist.includes(host) ||
+		blockedHosts.includes(host)
+	) {
+		console.log('RRR: blocked');
 		return;
 	}
 
@@ -89,14 +106,7 @@ const main = async (override = false) => {
 					}
 					if (isNew) {
 						if (!confirm(match)) {
-							chrome.storage.sync.set(
-								{ 
-									[blockedFieldName]: JSON.stringify(
-										[...blockedHosts, host]
-									) 
-								},
-								() => {}
-							);
+							setBlocked([...blockedHosts, host]);
 							return;
 						}
 						console.log('RRR: saving...');
