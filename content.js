@@ -1,3 +1,4 @@
+// gets passed to background.js
 const cfg = {
 	arenaAccessToken,
 	channelSlug,
@@ -46,9 +47,7 @@ const getBlockedFromStorage = async () => {
 
 const setBlocked = (blockedList) => {
 	chrome.storage.sync.set(
-		{ 
-			[blockedFieldName]: JSON.stringify(blockedList) 
-		},
+		{ [blockedFieldName]: JSON.stringify(blockedList) },
 		() => {}
 	);
 };
