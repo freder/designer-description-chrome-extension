@@ -1,3 +1,5 @@
+/* global chrome */
+
 const fetchChannelContents = (cfg, page, perPage) => {
 	const pagination = `page=${page}&per=${perPage}`;
 	return fetch(
@@ -18,6 +20,7 @@ const isUrlNew = async (url, cfg) => {
 	let page = 0;
 	let allContents = [];
 	// fetch paginated data, until we got everything in channel:
+	// eslint-disable-next-line no-constant-condition
 	while (true) {
 		page += 1;
 		const { contents } = await fetchChannelContents(cfg, page, perPage);

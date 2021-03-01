@@ -1,3 +1,5 @@
+/* global chrome, arenaAccessToken, channelSlug, channelId, hostBlacklist */
+
 // gets passed to background.js
 const cfg = {
 	arenaAccessToken,
@@ -19,7 +21,7 @@ const matchMultiplePatterns = (s, patterns) => {
 				: [...acc, m];
 		},
 		[]
-	)
+	);
 };
 
 
@@ -32,10 +34,10 @@ const checkMatch = (strings, patterns) => {
 
 // https://developer.chrome.com/docs/extensions/reference/storage/#usage
 // storage can be inspected at chrome://sync-internals/
-	// → "sync node browser" → "extension settings"
+// → "sync node browser" → "extension settings"
 const getBlockedFromStorage = async () => {
 	return JSON.parse(
-		await new Promise((resolve, reject) => {
+		await new Promise((resolve) => {
 			chrome.storage.sync.get(
 				blockedFieldName,
 				(result) => resolve(result[blockedFieldName])
@@ -136,7 +138,7 @@ const main = async (override = false) => {
 
 
 chrome.runtime.onMessage.addListener(
-	async (req, sender, sendResponse) => {
+	async (/*req, sender, sendResponse*/) => {
 		await main(true);
 		// sendResponse('ok');
 	}
