@@ -31,13 +31,13 @@ const checkMatch = (strings, patterns) => {
 
 
 // https://developer.chrome.com/docs/extensions/reference/storage/#usage
-// storage can be inspected at chrome://sync-internals/ 
+// storage can be inspected at chrome://sync-internals/
 	// → "sync node browser" → "extension settings"
 const getBlockedFromStorage = async () => {
 	return JSON.parse(
 		await new Promise((resolve, reject) => {
 			chrome.storage.sync.get(
-				blockedFieldName, 
+				blockedFieldName,
 				(result) => resolve(result[blockedFieldName])
 			);
 		}) || '[]'
