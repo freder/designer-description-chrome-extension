@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "RRR-DesignerDescription",
 	"description": "a chrome extension that harvests all design-related meta descriptions it encounters, and adds them to an are.na channel.",
-	"version": "2",
+	"version": "3",
 	"author": "freder",
 	"permissions": [
 		"activeTab",
