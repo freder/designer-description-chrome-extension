@@ -24,6 +24,7 @@
 			"run_at": "document_idle",
 			"js": [
 				"config.js",
+				"utils.js",
 				"content.js"
 			]
 		}
