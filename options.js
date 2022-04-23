@@ -9,10 +9,8 @@ getBlockedFromStorage().then((urls) => {
 		link.target = '_blank';
 
 		const button = document.createElement('a');
+		button.className = 'remove-btn';
 		button.textContent = 'remove';
-		button.style.marginRight = 10 + 'px';
-		button.style.color = 'red';
-		button.style.cursor = 'pointer';
 		button.onclick = (event) => {
 			event.preventDefault();
 			setBlocked(
