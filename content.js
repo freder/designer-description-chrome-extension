@@ -30,7 +30,6 @@ const checkMatch = (strings, patterns) => {
 
 
 const main = async (override = false) => {
-	// setBlocked([]);
 	const { host } = window.location;
 	if (hostBlacklist.includes(host)) {
 		console.log('RRR: blocked (config)');

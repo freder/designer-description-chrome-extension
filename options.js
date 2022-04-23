@@ -1,4 +1,14 @@
 const container = document.getElementById('list');
+
+const removeAllButton = document.getElementById('remove-all');
+removeAllButton.onclick = (event) => {
+	console.log('here');
+	event.preventDefault();
+	setBlocked([]).then(
+		() => window.location.reload()
+	);
+};
+
 getBlockedFromStorage().then((urls) => {
 	urls.forEach((url) => {
 		const elem = document.createElement('div');
