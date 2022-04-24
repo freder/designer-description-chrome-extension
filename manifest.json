@@ -14,7 +14,7 @@
 		"chrome_style": true
 	},
 	"browser_action": {
-		"default_title": "harvest"
+		"default_title": "RRR designer description harvester"
 	},
 	"background": {
 		"scripts": [
