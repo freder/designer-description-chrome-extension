@@ -32,13 +32,13 @@ const checkMatch = (strings, patterns) => {
 const main = async (override = false) => {
 	const { host } = window.location;
 	if (hostBlacklist.includes(host)) {
-		console.log('RRR: blocked (config)');
+		console.warn('RRR: blocked (config)');
 		return;
 	}
 
 	const blockedHosts = await getBlockedFromStorage();
 	if (blockedHosts.includes(host)) {
-		console.log('RRR: blocked (storage)');
+		console.warn('RRR: blocked (storage)');
 		return;
 	}
 
@@ -66,7 +66,7 @@ const main = async (override = false) => {
 		}
 
 		const match = checkMatch(strings, patterns);
-		const isMatch = !!match;
+		const isMatch = Boolean(match);
 		if (isMatch || override) {
 			// check if url is already in existing blocks
 			const url = window.location.origin;
