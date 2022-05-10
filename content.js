@@ -29,6 +29,67 @@ const checkMatch = (strings, patterns) => {
 };
 
 
+const forgetHandler = (blockedHosts, host) => {
+	setBlocked([...blockedHosts, host]);
+};
+
+
+const saveHandler = (url, match) => {
+	console.log('RRR: saving...');
+	return chrome.runtime.sendMessage(
+		{
+			fn: 'addBlock',
+			url,
+			descriptionStr: match,
+			cfg,
+		},
+		(res) => {
+			console.log(res);
+		}
+	);
+};
+
+
+const removeDialog = () => {
+	const dialog = document.getElementById('rrr-dialog');
+	dialog.remove();
+};
+
+
+const showDialog = (match, url, blockedHosts, host) => {
+	const dialog = document.createElement('div');
+	dialog.id = 'rrr-dialog';
+	dialog.style.position = 'fixed';
+	dialog.style.top = '0';
+	dialog.style.right = '0';
+	dialog.style.zIndex = '9999999';
+	dialog.style.padding = '20px';
+	dialog.style.border = 'solid 4px blue';
+	dialog.style.background = 'white';
+	dialog.style.fontFamily = 'sans-serif';
+	dialog.style.fontSize = '16px';
+	dialog.style.width = '310px';
+	const btnStyle = 'color: blue; text-decoration: underline; cursor: pointer;';
+	dialog.innerHTML = `${match}
+		<div style="font-size: 2em; margin-top: 0.15em">
+			<a class="cancel-btn" style="float: left; ${btnStyle}">forget</a>
+			<a class="save-btn" style="float: right; ${btnStyle}">save</a>
+		</div>
+	`;
+	document.body.appendChild(dialog);
+	const saveBtn = dialog.querySelector('.save-btn');
+	saveBtn.addEventListener('click', () => {
+		saveHandler(url, match);
+		removeDialog();
+	});
+	const cancelBtn = dialog.querySelector('.cancel-btn');
+	cancelBtn.addEventListener('click', () => {
+		forgetHandler(blockedHosts, host);
+		removeDialog();
+	});
+};
+
+
 const main = async (override = false) => {
 	const { host } = window.location;
 	if (hostBlacklist.includes(host)) {
@@ -82,22 +143,7 @@ const main = async (override = false) => {
 						console.warn(chrome.runtime.lastError.message);
 					}
 					if (isNew) {
-						if (!confirm(match)) {
-							setBlocked([...blockedHosts, host]);
-							return;
-						}
-						console.log('RRR: saving...');
-						return chrome.runtime.sendMessage(
-							{
-								fn: 'addBlock',
-								url,
-								descriptionStr: match,
-								cfg,
-							},
-							(res) => {
-								console.log(res);
-							}
-						);
+						showDialog(match, url, blockedHosts, host);
 					} else {
 						console.info('RRR: url exists already');
 					}
@@ -120,11 +166,17 @@ chrome.runtime.onMessage.addListener(
 
 console.log('RRReady');
 let ran = false;
+
 // since chrome will automatically close dialogs in new tabs,
 // let't wait until the tab becomes active
-document.addEventListener('visibilitychange', () => {
-	if (document.visibilityState === 'visible' && !ran) {
-		ran = true;
-		setTimeout(main, 300);
-	}
-});
+// document.addEventListener('visibilitychange', () => {
+// 	if (document.visibilityState === 'visible' && !ran) {
+// 		ran = true;
+// 		setTimeout(main, 300);
+// 	}
+// });
+
+if (!ran) {
+	ran = true;
+	setTimeout(main, 500);
+}
