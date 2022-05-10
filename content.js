@@ -66,11 +66,18 @@ const showDialog = (match, url, blockedHosts, host) => {
 	dialog.style.padding = '20px';
 	dialog.style.border = 'solid 4px blue';
 	dialog.style.background = 'white';
+	dialog.style.color = 'black';
 	dialog.style.fontFamily = 'sans-serif';
 	dialog.style.fontSize = '16px';
 	dialog.style.width = '310px';
-	const btnStyle = 'color: blue; text-decoration: underline; cursor: pointer;';
-	dialog.innerHTML = `${match}
+	const btnStyle = [
+		'color: blue',
+		'text-decoration: underline',
+		'cursor: pointer',
+		'border: none',
+	].join('; ');
+	dialog.innerHTML = `
+		<div>${match}</div>
 		<div style="font-size: 2em; margin-top: 0.15em">
 			<a class="cancel-btn" style="float: left; ${btnStyle}">forget</a>
 			<a class="save-btn" style="float: right; ${btnStyle}">save</a>
