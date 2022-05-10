@@ -73,13 +73,12 @@ chrome.runtime.onMessage.addListener(
 
 
 chrome.browserAction.onClicked.addListener(
-	(tab) => {
+	(/* tab */) => {
 		// chrome.tabs.sendMessage(
 		// 	tab.id,
 		// 	{ /*args: 'do it!'*/ },
 		// 	() => {}
 		// );
-
-		chrome.runtime.openOptionsPage(() => {});
+		chrome.runtime.openOptionsPage(() => { });
 	}
 );

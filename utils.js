@@ -6,6 +6,7 @@ const blockedFieldName = 'blockedHosts';
 // https://developer.chrome.com/docs/extensions/reference/storage/#usage
 // storage can be inspected at chrome://sync-internals/
 // → "sync node browser" → "extension settings"
+// eslint-disable-next-line no-unused-vars
 const getBlockedFromStorage = async () => {
 	return JSON.parse(
 		await new Promise((resolve) => {
@@ -18,6 +19,7 @@ const getBlockedFromStorage = async () => {
 };
 
 
+// eslint-disable-next-line no-unused-vars
 const setBlocked = (blockedList) => {
 	return new Promise((resolve) => {
 		chrome.storage.sync.set(
