@@ -93,13 +93,13 @@ const showDialog = (match, url, blockedHosts, host) => {
 const main = async (override = false) => {
 	const { host } = window.location;
 	if (hostBlacklist.includes(host)) {
-		console.warn('RRR: blocked (config)');
+		console.log('RRR: blocked (config)');
 		return;
 	}
 
 	const blockedHosts = await getBlockedFromStorage();
 	if (blockedHosts.includes(host)) {
-		console.warn('RRR: blocked (storage)');
+		console.log('RRR: blocked (storage)');
 		return;
 	}
 
