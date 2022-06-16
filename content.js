@@ -59,7 +59,7 @@ const removeDialog = () => {
 const showDialog = (match, url, blockedHosts, host) => {
 	const dialog = document.createElement('div');
 	dialog.id = 'rrr-dialog';
-	dialog.style.position = 'fixed';
+	dialog.style.position = 'absolute';
 	dialog.style.top = '0';
 	dialog.style.right = '0';
 	dialog.style.zIndex = '9999999';
@@ -69,10 +69,12 @@ const showDialog = (match, url, blockedHosts, host) => {
 	dialog.style.color = 'black';
 	dialog.style.fontFamily = 'sans-serif';
 	dialog.style.fontSize = '16px';
-	dialog.style.width = '310px';
+	dialog.style.lineHeight = '1.2';
+	dialog.style.width = '350px';
+	dialog.style.lineBreak = 'anywhere';
 	const btnStyle = [
 		'color: blue',
-		'text-decoration: underline',
+		'text-decoration: none',
 		'cursor: pointer',
 		'border: none',
 	].join('; ');
